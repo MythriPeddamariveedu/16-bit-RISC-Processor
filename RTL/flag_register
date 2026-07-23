@@ -1,0 +1,46 @@
+`timescale 1ns/1ps
+//============================================================
+// Module Name : flag_register
+// Description : Generates processor status flags
+//============================================================
+
+module flag_register(
+
+    input  wire [15:0] result,
+    input  wire        carry_in,
+
+    output wire        zero,
+    output wire        carry,
+    output wire        negative,
+    output wire        overflow
+
+);
+
+    //--------------------------------------------------------
+    // Zero Flag
+    //--------------------------------------------------------
+
+    assign zero = ~|result;
+
+    //--------------------------------------------------------
+    // Carry Flag
+    //--------------------------------------------------------
+
+    assign carry = carry_in;
+
+    //--------------------------------------------------------
+    // Negative Flag (MSB of result)
+    //--------------------------------------------------------
+
+    assign negative = result[15];
+
+    //--------------------------------------------------------
+    // Overflow Flag
+    //--------------------------------------------------------
+    // Placeholder for now.
+    // Later, risc_top can provide proper overflow detection.
+    //--------------------------------------------------------
+
+    assign overflow = 1'b0;
+
+endmodule
