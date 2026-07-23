@@ -1,0 +1,62 @@
+//=====================================================
+// 16-bit Single Cycle RISC Processor Demo Program
+//=====================================================
+// Format:
+// [15:12] Opcode
+// [11:8]  Destination Register (RD)
+// [7:4]   Source Register (RS1)
+// [3:0]   Source Register 2 / Immediate
+//
+// Opcodes
+// 0 = ADD
+// 1 = SUB
+// 2 = AND
+// 3 = OR
+// 4 = LOAD
+// 5 = STORE
+// 6 = XOR
+// 7 = NOT
+// 8 = SHIFT LEFT
+// 9 = SHIFT RIGHT
+//=====================================================
+
+0123    // ADD   R1,R2,R3
+1456    // SUB   R4,R5,R6
+2123    // AND   R1,R2,R3
+3123    // OR    R1,R2,R3
+
+4124    // LOAD  R1,[R2+4]
+5124    // STORE R1,[R2+4]
+
+6312    // XOR   R3,R1,R2
+7310    // NOT   R3,R1
+
+8121    // SHL   R1,R2,1
+9121    // SHR   R1,R2,1
+
+0514    // ADD   R5,R1,R4
+1652    // SUB   R6,R5,R2
+2761    // AND   R7,R6,R1
+3872    // OR    R8,R7,R2
+
+6413    // XOR   R4,R1,R3
+7510    // NOT   R5,R1
+
+4121    // LOAD  R1,[R2+1]
+5232    // STORE R2,[R3+2]
+
+0132    // ADD   R1,R3,R2
+1241    // SUB   R2,R4,R1
+2356    // AND   R3,R5,R6
+3467    // OR    R4,R6,R7
+
+8571    // SHL   R5,R7,1
+9681    // SHR   R6,R8,1
+
+6123    // XOR   R1,R2,R3
+7230    // NOT   R2,R3
+
+4134    // LOAD  R1,[R3+4]
+5345    // STORE R3,[R4+5]
+
+0000    // NOP/End
