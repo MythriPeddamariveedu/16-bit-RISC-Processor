@@ -1,0 +1,270 @@
+`timescale 1ns/1ps
+//============================================================
+// Module Name : risc_top
+// Description : 16-bit Single Cycle RISC Processor
+//============================================================
+
+module risc_top(
+
+    input  wire clk,
+    input  wire rst
+
+);
+
+//------------------------------------------------------------
+// Program Counter Signals
+//------------------------------------------------------------
+
+wire [15:0] pc;
+wire [15:0] next_pc;
+
+//------------------------------------------------------------
+// Instruction Fetch Signals
+//------------------------------------------------------------
+
+wire [15:0] instruction;
+//------------------------------------------------------------
+// IF/ID Pipeline Register Signal
+//------------------------------------------------------------
+
+wire [15:0] if_id_instruction;
+//------------------------------------------------------------
+// Instruction Decode Signals
+//------------------------------------------------------------
+
+wire [3:0] opcode;
+wire [3:0] rd;
+wire [3:0] rs1;
+wire [3:0] rs2_imm;
+
+//------------------------------------------------------------
+// Control Signals
+//------------------------------------------------------------
+
+wire        reg_write;
+wire        alu_src;
+wire        mem_read;
+wire        mem_write;
+wire        mem_to_reg;
+
+wire [2:0]  alu_sel;
+
+//------------------------------------------------------------
+// Register File Signals
+//------------------------------------------------------------
+
+wire [15:0] read_data1;
+wire [15:0] read_data2;
+
+//------------------------------------------------------------
+// Immediate
+//------------------------------------------------------------
+
+wire [15:0] sign_ext_imm;
+
+//------------------------------------------------------------
+// ALU Signals
+//------------------------------------------------------------
+
+wire [15:0] alu_operand2;
+wire [15:0] alu_result;
+wire        carry_out;
+
+//------------------------------------------------------------
+// Flag Signals
+//------------------------------------------------------------
+
+wire zero;
+wire carry;
+wire negative;
+wire overflow;
+
+//------------------------------------------------------------
+// Data Memory Signals
+//------------------------------------------------------------
+
+wire [15:0] mem_read_data;
+
+//------------------------------------------------------------
+// Write Back Signal
+//------------------------------------------------------------
+
+wire [15:0] write_back_data;
+
+
+//============================================================
+// Instruction Fetch Stage
+//============================================================
+
+program_counter U_PC(
+
+    .clk(clk),
+    .rst(rst),
+    .pc_write(1'b1),
+    .next_pc(next_pc),
+    .pc(pc)
+
+);
+
+pc_adder U_PC_ADDER(
+
+    .pc(pc),
+    .next_pc(next_pc)
+
+);
+
+instruction_memory U_IMEM(
+
+    .address(pc),
+    .instruction(instruction)
+
+);
+//============================================================
+// IF/ID Pipeline Register
+//============================================================
+
+if_id_pipeline U_IF_ID(
+
+    .clk(clk),
+    .rst(rst),
+
+    .instruction_in(instruction),
+
+    .if_id_instruction(if_id_instruction)
+
+);
+
+//============================================================
+// Instruction Decode Stage
+//============================================================
+
+instruction_decoder U_DECODER(
+
+    .instruction(if_id_instruction),
+
+    .opcode(opcode),
+    .rd(rd),
+    .rs1(rs1),
+    .rs2_imm(rs2_imm)
+
+);
+
+control_unit U_CONTROL(
+
+    .opcode(opcode),
+
+    .reg_write(reg_write),
+    .alu_src(alu_src),
+    .mem_read(mem_read),
+    .mem_write(mem_write),
+    .mem_to_reg(mem_to_reg),
+    .alu_sel(alu_sel)
+
+);
+//============================================================
+// Register File
+//============================================================
+
+register_file U_REGFILE(
+
+    .clk(clk),
+    .rst(rst),
+    .reg_write(reg_write),
+
+    .rs1(rs1),
+    .rs2(rs2_imm),
+    .rd(rd),
+
+    .write_data(write_back_data),
+
+    .read_data1(read_data1),
+    .read_data2(read_data2)
+
+);
+
+
+//============================================================
+// Immediate Generation
+//============================================================
+
+sign_extend U_SIGN_EXT(
+
+    .imm_in(rs2_imm),
+    .imm_out(sign_ext_imm)
+
+);
+
+
+//============================================================
+// ALU Operand Selection
+//============================================================
+
+mux2x1 U_MUX(
+
+    .in0(read_data2),
+    .in1(sign_ext_imm),
+    .sel(alu_src),
+
+    .out(alu_operand2)
+
+);
+
+
+//============================================================
+// Execute Stage (ALU)
+//============================================================
+
+alu_top U_ALU(
+
+    .A(read_data1),
+    .B(alu_operand2),
+    .alu_sel(alu_sel),
+
+    .result(alu_result),
+    .carry_out(carry_out)
+
+);
+
+
+//============================================================
+// Flag Generation
+//============================================================
+
+flag_register U_FLAGS(
+
+    .result(alu_result),
+    .carry_in(carry_out),
+
+    .zero(zero),
+    .carry(carry),
+    .negative(negative),
+    .overflow(overflow)
+
+);
+//============================================================
+// Memory Stage
+//============================================================
+
+data_memory U_DMEM(
+
+    .clk(clk),
+    .mem_read(mem_read),
+    .mem_write(mem_write),
+
+    .address(alu_result[7:0]),
+
+    .write_data(read_data2),
+
+    .read_data(mem_read_data)
+
+);
+
+
+//============================================================
+// Write Back Stage
+//============================================================
+
+// Select ALU result or Memory data to write back
+assign write_back_data = (mem_to_reg) ? mem_read_data : alu_result;
+
+endmodule
