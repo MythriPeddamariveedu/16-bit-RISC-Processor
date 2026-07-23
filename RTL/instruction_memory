@@ -1,0 +1,45 @@
+`timescale 1ns/1ps
+//============================================================
+// Module Name : instruction_memory
+// Description : 256 x 16-bit Instruction Memory
+//============================================================
+
+module instruction_memory(
+
+    input  wire [15:0] address,
+    output reg  [15:0] instruction
+
+);
+
+    //--------------------------------------------------------
+    // Memory Declaration
+    //--------------------------------------------------------
+
+    reg [15:0] memory [0:255];
+
+    integer i;
+
+    //--------------------------------------------------------
+    // Initialize Memory
+    //--------------------------------------------------------
+
+    initial begin
+
+        // Initialize entire memory
+        for(i=0;i<256;i=i+1)
+            memory[i] = 16'h0000;
+
+        // Load program
+        $readmemh("program.mem", memory);
+
+    end
+
+    //--------------------------------------------------------
+    // Read Instruction
+    //--------------------------------------------------------
+
+    always @(*) begin
+        instruction = memory[address];
+    end
+
+endmodule
