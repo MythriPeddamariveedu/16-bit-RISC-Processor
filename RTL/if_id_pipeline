@@ -1,0 +1,23 @@
+`timescale 1ns/10ps
+//============================================================
+// Module : IF/ID Pipeline Register
+//============================================================
+module if_id_pipeline(
+
+    input  wire        clk,
+    input  wire        rst,
+    input  wire [15:0] instruction_in,
+
+    output reg  [15:0] if_id_instruction
+
+);
+
+always @(posedge clk or posedge rst)
+begin
+    if(rst)
+        if_id_instruction <= 16'h0000;
+    else
+        if_id_instruction <= instruction_in;
+end
+
+endmodule
