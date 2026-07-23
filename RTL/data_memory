@@ -1,0 +1,59 @@
+`timescale 1ns/1ps
+//============================================================
+// Module Name : data_memory
+// Description : 256 x 16-bit Data Memory
+//============================================================
+
+module data_memory(
+
+
+    input  wire        clk,
+    input  wire        mem_read,
+    input  wire        mem_write,
+    input  wire [7:0]  address,
+    input  wire [15:0] write_data,
+
+    output wire [15:0] read_data
+
+);
+
+    //--------------------------------------------------------
+    // Memory Declaration
+    //--------------------------------------------------------
+
+    reg [15:0] memory [0:255];
+
+      integer i;
+    
+     initial begin
+    for(i=0;i<256;i=i+1)
+        memory[i] = 16'h0000;
+
+    memory[0] = 16'h0010;
+    memory[1] = 16'h0005;
+    memory[2] = 16'h00AA;
+    memory[3] = 16'h0055;
+    memory[4] = 16'h1234;
+    memory[5] = 16'hABCD;
+    memory[6] = 16'h00FF;
+    memory[7] = 16'hFFFF;
+
+end
+    //--------------------------------------------------------
+    // Write
+    //--------------------------------------------------------
+
+    always @(posedge clk)
+
+        if(mem_write)
+            memory[address] <= write_data;
+
+    //--------------------------------------------------------
+    // Read
+    //--------------------------------------------------------
+
+    assign read_data = (mem_read) ?
+                        memory[address] :
+                        16'h0000;
+
+endmodule
