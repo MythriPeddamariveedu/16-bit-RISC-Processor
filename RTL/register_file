@@ -1,0 +1,49 @@
+`timescale 1ns/1ps
+
+module register_file(
+
+    input  wire        clk,
+    input  wire        rst,
+    input  wire        reg_write,
+
+    input  wire [3:0]  rs1,
+    input  wire [3:0]  rs2,
+    input  wire [3:0]  rd,
+
+    input  wire [15:0] write_data,
+
+    output wire [15:0] read_data1,
+    output wire [15:0] read_data2
+
+);
+
+reg [15:0] registers [0:15];
+
+integer i;
+
+always @(posedge clk or posedge rst)
+begin
+    if(rst)
+begin
+    registers[0] <= 16'h0000;
+    registers[1] <= 16'h0005;
+    registers[2] <= 16'h000A;
+    registers[3] <= 16'h0003;
+    registers[4] <= 16'h0010;
+    registers[5] <= 16'h0008;
+    registers[6] <= 16'h0002;
+    registers[7] <= 16'h0001;
+
+    for(i=8;i<16;i=i+1)
+        registers[i] <= 16'h0000;
+end
+    else if(reg_write)
+    begin
+        registers[rd] <= write_data;
+    end
+end
+
+assign read_data1 = registers[rs1];
+assign read_data2 = registers[rs2];
+
+endmodule
