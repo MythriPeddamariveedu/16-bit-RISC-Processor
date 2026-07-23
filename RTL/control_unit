@@ -1,0 +1,117 @@
+`timescale 1ns/1ps
+//============================================================
+// Module Name : control_unit
+// Description : Generates control signals for 16-bit RISC Processor
+//============================================================
+
+module control_unit(
+
+    input  wire [3:0] opcode,
+
+    output reg        reg_write,
+    output reg        alu_src,
+    output reg        mem_read,
+    output reg        mem_write,
+    output reg        mem_to_reg,
+    output reg [2:0]  alu_sel
+
+);
+
+always @(*) begin
+
+    //--------------------------------------------------
+    // Default Values
+    //--------------------------------------------------
+
+    reg_write = 1'b0;
+    alu_src   = 1'b0;
+    mem_read  = 1'b0;
+    mem_write = 1'b0;
+    mem_to_reg= 1'b0;
+    alu_sel   = 3'b000;
+
+    //--------------------------------------------------
+    // Opcode Decode
+    //--------------------------------------------------
+
+    case(opcode)
+
+        // ADD
+        4'b0000: begin
+            reg_write = 1'b1;
+            alu_sel   = 3'b000;
+        end
+
+        // SUB
+        4'b0001: begin
+            reg_write = 1'b1;
+            alu_sel   = 3'b001;
+        end
+
+        // AND
+        4'b0010: begin
+            reg_write = 1'b1;
+            alu_sel   = 3'b010;
+        end
+
+        // OR
+        4'b0011: begin
+            reg_write = 1'b1;
+            alu_sel   = 3'b011;
+        end
+
+        // LOAD
+        4'b0100: begin
+            reg_write = 1'b1;
+            alu_src   = 1'b1;
+            mem_read  = 1'b1;
+            mem_to_reg= 1'b1;
+            alu_sel   = 3'b000;     // Address Calculation
+        end
+
+        // STORE
+        4'b0101: begin
+            reg_write = 1'b0;
+            alu_src   = 1'b1;
+            mem_write = 1'b1;
+            alu_sel   = 3'b000;     // Address Calculation
+        end
+
+        // XOR
+        4'b0110: begin
+            reg_write = 1'b1;
+            alu_sel   = 3'b100;
+        end
+
+        // NOT
+        4'b0111: begin
+            reg_write = 1'b1;
+            alu_sel   = 3'b101;
+        end
+
+        // SHIFT LEFT
+        4'b1000: begin
+            reg_write = 1'b1;
+            alu_sel   = 3'b110;
+        end
+
+        // SHIFT RIGHT
+        4'b1001: begin
+            reg_write = 1'b1;
+            alu_sel   = 3'b111;
+        end
+
+        default: begin
+            reg_write = 1'b0;
+            alu_src   = 1'b0;
+            mem_read  = 1'b0;
+            mem_write = 1'b0;
+            mem_to_reg= 1'b0;
+            alu_sel   = 3'b000;
+        end
+
+    endcase
+
+end
+
+endmodule
