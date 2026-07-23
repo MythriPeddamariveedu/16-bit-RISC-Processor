@@ -1,0 +1,120 @@
+`timescale 1ns/1ps
+//============================================================
+// Module Name : alu_top
+// Description : Top ALU Module for 16-bit RISC Processor
+//============================================================
+
+module alu_top(
+
+    input  wire [15:0] A,
+    input  wire [15:0] B,
+    input  wire [2:0]  alu_sel,
+
+    output reg  [15:0] result,
+    output wire        carry_out
+
+);
+
+//--------------------------------------------------
+// Internal Signals
+//--------------------------------------------------
+
+wire [15:0] add_out;
+wire [15:0] sub_out;
+wire [15:0] logic_out;
+wire [15:0] shift_out;
+
+wire add_carry;
+wire sub_carry;
+
+wire [1:0] logic_sel;
+wire shift_dir;
+
+//--------------------------------------------------
+// Control Decode
+//--------------------------------------------------
+
+assign logic_sel =
+        (alu_sel == 3'b010) ? 2'b00 :
+        (alu_sel == 3'b011) ? 2'b01 :
+        (alu_sel == 3'b100) ? 2'b10 :
+                              2'b11;
+
+assign shift_dir = (alu_sel == 3'b111);
+
+//--------------------------------------------------
+// Module Instantiations
+//--------------------------------------------------
+
+adder U_ADD (
+
+    .cout(add_carry),
+    .sum(add_out),
+    .a(A),
+    .b(B),
+    .cin(1'b0)
+
+);
+
+sub U_SUB (
+
+    .cout(sub_carry),
+    .sum(sub_out),
+    .a(A),
+    .b(B),
+    .cin(1'b0)
+
+);
+
+alu_logic U_LOGIC (
+
+    .A(A),
+    .B(B),
+    .logic_sel(logic_sel),
+    .logic_out(logic_out)
+
+);
+
+shifter U_SHIFT (
+
+    .out(shift_out),
+    .a(A),
+    .dir(shift_dir)
+
+);
+
+//--------------------------------------------------
+// Result Selection
+//--------------------------------------------------
+
+always @(*) begin
+
+    case (alu_sel)
+
+        3'b000 : result = add_out;     // ADD
+
+        3'b001 : result = sub_out;     // SUB
+
+        3'b010,
+        3'b011,
+        3'b100,
+        3'b101 : result = logic_out;   // AND, OR, XOR, NOT
+
+        3'b110,
+        3'b111 : result = shift_out;   // Shift Left, Shift Right
+
+        default : result = 16'h0000;
+
+    endcase
+
+end
+
+//--------------------------------------------------
+// Carry Output
+//--------------------------------------------------
+
+assign carry_out = (alu_sel == 3'b000) ? add_carry :
+                   (alu_sel == 3'b001) ? sub_carry :
+                                         1'b0;
+
+endmodule
