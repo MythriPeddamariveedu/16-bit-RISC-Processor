@@ -1,0 +1,10 @@
+module sub(cout,sum,a,b,cin);
+input [15:0]a,b;
+input cin;
+output [15:0]sum;
+output cout;
+wire [16:0]temp;
+assign temp={1'b0,a} + {1'b0,~b} + 17'd1+cin;
+
+assign {cout,sum}= temp;//a+(~b)+1'b1+cin;
+endmodule
