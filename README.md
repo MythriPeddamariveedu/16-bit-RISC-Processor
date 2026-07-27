@@ -131,7 +131,7 @@ The pipeline separates instruction fetch from instruction decode, improving inst
 ## Processor Waveform
 
 <p align="center">
-<img src="simulation_results/Processor_waveform.png" width="950">
+<img src="simulation_results/processor_waveform.png" width="950">
 </p>
 
 <p align="center">
@@ -157,7 +157,7 @@ The pipeline separates instruction fetch from instruction decode, improving inst
 ## Resource Utilization
 
 <p align="center">
-<img src="simulation_results/resource_utilization.png" width="850">
+<img src="simulation_results/Resource_Utilization.png" width="850">
 </p>
 
 ---
@@ -165,7 +165,7 @@ The pipeline separates instruction fetch from instruction decode, improving inst
 ## Timing Analysis
 
 <p align="center">
-<img src="simulation_results/timing_summary.png" width="850">
+<img src="simulation_results/Timing_summary.png" width="850">
 </p>
 
 ---
@@ -236,7 +236,7 @@ The pipeline separates instruction fetch from instruction decode, improving inst
 
 # Author
 
-**Mythri Reddy**
+**Mythri Peddamariveedu**
 
 Bachelor of Technology  
 Electronics and Communication Engineering
