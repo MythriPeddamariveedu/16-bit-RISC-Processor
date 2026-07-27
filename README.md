@@ -19,7 +19,7 @@ The processor demonstrates the complete RTL design flow while maintaining clean,
 # Processor Datapath
 
 <p align="center">
-<img src="architecture/Datapath_Architecture.png" width="950">
+<img src="architecture/Datapath%20Architecture.png" width="950">
 </p>
 
 <p align="center">
@@ -157,7 +157,7 @@ The pipeline separates instruction fetch from instruction decode, improving inst
 ## Resource Utilization
 
 <p align="center">
-<img src="simulation_results/Resource_Utilization.png" width="850">
+<img src="simulation_results/Resource%20Utilization.png" width="850">
 </p>
 
 ---
