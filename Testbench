@@ -16,11 +16,24 @@ reg rst;
 //------------------------------------------------------------
 // Instantiate DUT (Device Under Test)
 //------------------------------------------------------------
+wire [15:0] pc_out;
+wire [15:0] instruction_out;
+wire [15:0] alu_result_out;
+wire [15:0] write_back_out;
+wire        zero_out;
+wire        carry_out_flag;
 
 risc_top DUT(
 
     .clk(clk),
-    .rst(rst)
+    .rst(rst),
+
+    .pc_out(pc_out),
+    .instruction_out(instruction_out),
+    .alu_result_out(alu_result_out),
+    .write_back_out(write_back_out),
+    .zero_out(zero_out),
+    .carry_out_flag(carry_out_flag)
 
 );
 
@@ -100,3 +113,4 @@ initial begin
 end
 
 endmodule
+
